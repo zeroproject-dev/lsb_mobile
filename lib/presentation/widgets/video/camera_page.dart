@@ -65,14 +65,17 @@ class _CameraPageState extends State<CameraPage> {
       Timer(const Duration(milliseconds: 100), () {});
       setState(() => _isRecording = true);
       Timer(const Duration(seconds: 3), () async {
-        XFile file = await _cameraController.stopVideoRecording();
-        _countdown = 3;
-        setState(() => _isRecording = false);
-        final route = MaterialPageRoute(
-          fullscreenDialog: true,
-          builder: (_) => VideoPage(filePath: file.path, word: _selectedWord),
-        );
-        Navigator.push(context, route);
+        if (_selectedWord != null) {
+          XFile file = await _cameraController.stopVideoRecording();
+          _countdown = 3;
+          setState(() => _isRecording = false);
+          final route = MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (_) =>
+                VideoPage(filePath: file.path, word: _selectedWord!),
+          );
+          Navigator.push(context, route);
+        }
       });
     });
   }

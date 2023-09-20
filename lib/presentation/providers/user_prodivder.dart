@@ -25,7 +25,7 @@ class UserProvider extends ChangeNotifier {
     userConfiguration
       ..email = e
       ..password = p
-      ..haveCredentialsSaved = e == null || p == null
+      ..haveCredentialsSaved = e != null && p != null
       ..save();
   }
 
