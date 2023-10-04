@@ -37,7 +37,13 @@ class LoginScreen extends StatelessWidget {
         body: Center(
           child: Column(
             children: [
-              const Text("Inicio de sesión"),
+              const Spacer(),
+              const Text(
+                "Inicio de sesión",
+                style: TextStyle(fontSize: 28),
+              ),
+              const Spacer(),
+              Image.asset("assets/images/login_image.png"),
               const Spacer(),
               Padding(
                 padding:

@@ -47,6 +47,7 @@ dependencies:
   go_router: ^10.1.2
   formz: ^0.6.0
   searchfield: ^0.8.4
+  http: ^0.13.6
 
 dev_dependencies:
   flutter_test:

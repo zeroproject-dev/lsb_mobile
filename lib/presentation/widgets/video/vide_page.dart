@@ -1,6 +1,10 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/dio.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:gallery_saver/files.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:video_player/video_player.dart';
 
@@ -42,7 +46,46 @@ class _VideoPageState extends State<VideoPage> {
           IconButton(
             icon: const Icon(Icons.check),
             onPressed: () async {
-              await GallerySaver.saveVideo(widget.filePath);
+              try {
+                Dio dio = Dio();
+                dio.options.followRedirects = true;
+                dio.options.maxRedirects = 5;
+                // dio.options.validateStatus = (status) => true;
+                String url = 'http://lsb.zeroproject.dev/api/v1/videos/';
+                FormData formData = FormData.fromMap({
+                  'video': await MultipartFile.fromFile(widget.filePath),
+                });
+
+                dio.interceptors.add(InterceptorsWrapper(
+                  onError: (DioException e, handler) {
+                    return handler.next(e);
+                  },
+                ));
+
+                Response response = await dio.post(url, data: formData);
+
+                if (response.statusCode != 200) {
+                  await GallerySaver.saveVideo(widget.filePath);
+                }
+
+                // final request = http.MultipartRequest("POST", Uri.parse(url));
+                // final headers = {"Content-type": "multipart/form-data"};
+                //
+                // var file = File(widget.filePath);
+                //
+                // request.files.add(http.MultipartFile(
+                //     'video', file.readAsBytes().asStream(), file.lengthSync(),
+                //     filename: widget.word));
+                //
+                // request.headers.addAll(headers);
+                // final response = await request.send();
+                // http.Response res = await http.Response.fromStream(response);
+                //
+                // print(res.body);
+              } catch (e) {
+                print("ERROR:");
+                print(e);
+              }
               () {
                 Navigator.pop(context);
               }();

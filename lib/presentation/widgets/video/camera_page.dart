@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:lsb_translator/presentation/widgets/video/vide_page.dart';
@@ -18,15 +19,14 @@ class _CameraPageState extends State<CameraPage> {
   int _countdown = 3;
   late CameraController _cameraController;
   List<String> words = [
-    "Hola",
-    "Como estas",
-    "Buenos dias",
-    "Buenas tardes",
-    "Buenas noches",
-    "Te amo",
+    // "Hola",
+    // "Como estas",
+    // "Buenos dias",
+    // "Buenas tardes",
+    // "Buenas noches",
+    // "Te amo",
   ];
   String? _selectedWord;
-  // late Timer _startRecordingTimer;
 
   _initCamera() async {
     final cameras = await availableCameras();
@@ -38,7 +38,20 @@ class _CameraPageState extends State<CameraPage> {
       enableAudio: false,
     );
     await _cameraController.initialize();
+    await _cameraController.prepareForVideoRecording();
+    await _getWords();
     setState(() => _isLoading = false);
+  }
+
+  _getWords() async {
+    final dio = Dio();
+
+    final res = await dio.get("http://lsb.zeroproject.dev/api/v1/words/");
+
+    if (res.data != null) {
+      words.addAll(
+          res.data.map((element) => element["word"].toString()).cast<String>());
+    }
   }
 
   _startRecord() async {
@@ -60,11 +73,10 @@ class _CameraPageState extends State<CameraPage> {
   }
 
   _recordVideo() async {
-    await _cameraController.prepareForVideoRecording();
     _cameraController.startVideoRecording().then((value) {
       Timer(const Duration(milliseconds: 100), () {});
       setState(() => _isRecording = true);
-      Timer(const Duration(seconds: 3), () async {
+      Timer(const Duration(seconds: 2), () async {
         if (_selectedWord != null) {
           XFile file = await _cameraController.stopVideoRecording();
           _countdown = 3;
