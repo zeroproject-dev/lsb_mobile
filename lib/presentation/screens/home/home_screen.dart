@@ -48,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        print("Traducir");
+                        Navigator.pushNamed(context, "/translate");
                       },
                       child: const Text("Traducir"),
                     ),

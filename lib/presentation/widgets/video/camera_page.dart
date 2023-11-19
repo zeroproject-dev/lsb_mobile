@@ -18,14 +18,7 @@ class _CameraPageState extends State<CameraPage> {
   bool _isRecording = false;
   int _countdown = 3;
   late CameraController _cameraController;
-  List<String> words = [
-    // "Hola",
-    // "Como estas",
-    // "Buenos dias",
-    // "Buenas tardes",
-    // "Buenas noches",
-    // "Te amo",
-  ];
+  List<String> words = [];
   String? _selectedWord;
 
   _initCamera() async {

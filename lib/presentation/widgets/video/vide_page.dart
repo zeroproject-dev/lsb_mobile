@@ -1,10 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:gallery_saver/files.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:video_player/video_player.dart';
 
@@ -83,8 +80,8 @@ class _VideoPageState extends State<VideoPage> {
                 //
                 // print(res.body);
               } catch (e) {
-                print("ERROR:");
-                print(e);
+                // print("ERROR:");
+                // print(e);
               }
               () {
                 Navigator.pop(context);
