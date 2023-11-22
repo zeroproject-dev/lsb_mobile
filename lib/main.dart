@@ -6,7 +6,7 @@ import 'package:lsb_translator/config/theme/app_theme.dart';
 import 'package:lsb_translator/presentation/screens/login/login_screen.dart';
 import 'package:lsb_translator/presentation/screens/profile/profile_screen.dart';
 import 'package:lsb_translator/presentation/screens/reacord/record_screen.dart';
-import 'package:lsb_translator/presentation/screens/translate/translate_screen.dart';
+import 'package:lsb_translator/presentation/screens/translate/rtc_translate_screen.dart';
 import 'package:provider/provider.dart';
 
 // void main() => runApp(const ProviderScope(
@@ -39,6 +39,7 @@ class MyApp extends StatelessWidget {
           "/login": (context) => const LoginScreen(),
           "/profile": (context) => const ProfileScreen(),
           // "/manual": (context) => const HomeScreen(),
+          // "/translate": (context) => const TranslateScreen(),
           "/translate": (context) => const TranslateScreen(),
           "/record_video": (context) => const RecordScreen(),
         },
