@@ -1,6 +1,4 @@
-import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
@@ -21,19 +19,18 @@ class _TranslateScreenState extends State<TranslateScreen> {
 
   RTCDataChannelInit? _dataChannelDict;
   RTCDataChannel? _dataChannel;
-  String transformType = "none";
 
   // MediaStream? _localStream;
   bool _inCalling = false;
 
-  DateTime? _timeStart;
-
   bool _loading = false;
 
+  String _prediction = "";
+
   void _onTrack(RTCTrackEvent event) {
-    print("TRACK EVENT: ${event.streams.map((e) => e.id)}, ${event.track.id}");
+    // print("TRACK EVENT: ${event.streams.map((e) => e.id)}, ${event.track.id}");
     if (event.track.kind == "video") {
-      print("HERE");
+      // print("HERE");
       _localRenderer.srcObject = event.streams[0];
     }
   }
@@ -41,23 +38,23 @@ class _TranslateScreenState extends State<TranslateScreen> {
   void _onDataChannelState(RTCDataChannelState? state) {
     switch (state) {
       case RTCDataChannelState.RTCDataChannelClosed:
-        print("Camera Closed!!!!!!!");
+        // print("Camera Closed!!!!!!!");
         break;
       case RTCDataChannelState.RTCDataChannelOpen:
-        print("Camera Opened!!!!!!!");
+        // print("Camera Opened!!!!!!!");
         break;
       default:
-        print("Data Channel State: $state");
+      // print("Data Channel State: $state");
     }
   }
 
   Future<bool> _waitForGatheringComplete(_) async {
-    print("WAITING FOR GATHERING COMPLETE");
+    // print("WAITING FOR GATHERING COMPLETE");
     if (_peerConnection!.iceGatheringState ==
         RTCIceGatheringState.RTCIceGatheringStateComplete) {
       return true;
     } else {
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1));
       return await _waitForGatheringComplete(_);
     }
   }
@@ -99,11 +96,11 @@ class _TranslateScreenState extends State<TranslateScreen> {
           http.StreamedResponse response = await request.send();
 
           String data = "";
-          print(response);
+          // print(response);
           if (response.statusCode == 200) {
             data = await response.stream.bytesToString();
             var dataMap = json.decode(data);
-            print(dataMap);
+            // print(dataMap);
             await _peerConnection!.setRemoteDescription(
               RTCSessionDescription(
                 dataMap["sdp"],
@@ -111,7 +108,7 @@ class _TranslateScreenState extends State<TranslateScreen> {
               ),
             );
           } else {
-            print(response.reasonPhrase);
+            // print(response.reasonPhrase);
           }
         });
   }
@@ -141,7 +138,7 @@ class _TranslateScreenState extends State<TranslateScreen> {
       _dataChannelDict!,
     );
     _dataChannel!.onDataChannelState = _onDataChannelState;
-    // _dataChannel!.onMessage = _onDataChannelMessage;
+    _dataChannel!.onMessage = _onDataChannelMessage;
 
     final mediaConstraints = <String, dynamic>{
       'audio': false,
@@ -168,10 +165,10 @@ class _TranslateScreenState extends State<TranslateScreen> {
         _peerConnection!.addTrack(element, stream);
       });
 
-      print("NEGOTIATE");
+      // print("NEGOTIATE");
       await _negotiateRemoteConnection();
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
     }
     if (!mounted) return;
 
@@ -189,7 +186,7 @@ class _TranslateScreenState extends State<TranslateScreen> {
       _peerConnection = null;
       _localRenderer.srcObject = null;
     } catch (e) {
-      print(e.toString());
+      // print(e.toString());
     }
     setState(() {
       _inCalling = false;
@@ -205,6 +202,25 @@ class _TranslateScreenState extends State<TranslateScreen> {
     super.initState();
 
     initLocalRenderers();
+
+    // _dataChannel?.onMessage = _onDataChannelMessage;
+  }
+
+  void _onDataChannelMessage(RTCDataChannelMessage message) {
+    try {
+      String jsonString = message.text;
+      Map<String, dynamic> messageData = json.decode(jsonString);
+
+      if (messageData.containsKey("prediction")) {
+        _prediction = messageData["prediction"];
+
+        setState(() {});
+      } else {
+        // print("Mensaje del servidor no contiene una predicción válida.");
+      }
+    } catch (e) {
+      // print("Error al procesar el mensaje: $e");
+    }
   }
 
   @override
@@ -224,7 +240,7 @@ class _TranslateScreenState extends State<TranslateScreen> {
                       // height: MediaQuery.of(context).size.width > 500
                       //     ? 500
                       //     : MediaQuery.of(context).size.width - 20,
-                      constraints: BoxConstraints(maxHeight: 500),
+                      constraints: const BoxConstraints(maxHeight: 500),
                       // width: MediaQuery.of(context).size.width > 500
                       //     ? 500
                       //     : MediaQuery.of(context).size.width - 20,
@@ -236,7 +252,7 @@ class _TranslateScreenState extends State<TranslateScreen> {
                               child: Container(
                                 color: Colors.black,
                                 child: _loading
-                                    ? Center(
+                                    ? const Center(
                                         child: CircularProgressIndicator(
                                           strokeWidth: 4,
                                         ),
@@ -274,13 +290,16 @@ class _TranslateScreenState extends State<TranslateScreen> {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Wrap(
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        Text("pruebaa"),
-                        SizedBox(
+                        Text(
+                          _prediction,
+                          style: const TextStyle(fontSize: 24),
+                        ),
+                        const SizedBox(
                           width: 20,
                         ),
                       ],
@@ -306,13 +325,13 @@ class _TranslateScreenState extends State<TranslateScreen> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 10, vertical: 5),
                         child: _loading
-                            ? Padding(
-                                padding: const EdgeInsets.all(8.0),
+                            ? const Padding(
+                                padding: EdgeInsets.all(8.0),
                                 child: CircularProgressIndicator(),
                               )
                             : Text(
-                                _inCalling ? "STOP" : "START",
-                                style: TextStyle(
+                                _inCalling ? "Detener" : "Empezar",
+                                style: const TextStyle(
                                   fontSize: 24,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
