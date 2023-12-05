@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
+import 'package:lsb_translator/shared/data/api_url.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoPage extends StatefulWidget {
@@ -48,7 +49,7 @@ class _VideoPageState extends State<VideoPage> {
                 dio.options.followRedirects = true;
                 dio.options.maxRedirects = 5;
                 // dio.options.validateStatus = (status) => true;
-                String url = 'http://lsb.zeroproject.dev/api/v1/videos/';
+                String url = '${ApiConfig.url}/videos/';
                 FormData formData = FormData.fromMap({
                   'video': await MultipartFile.fromFile(widget.filePath),
                 });

@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:lsb_translator/presentation/widgets/video/vide_page.dart';
+import 'package:lsb_translator/shared/data/api_url.dart';
 import 'package:searchfield/searchfield.dart';
 
 class CameraPage extends StatefulWidget {
@@ -39,7 +40,7 @@ class _CameraPageState extends State<CameraPage> {
   _getWords() async {
     final dio = Dio();
 
-    final res = await dio.get("http://lsb.zeroproject.dev/api/v1/words/");
+    final res = await dio.get("${ApiConfig.url}/words/");
 
     if (res.data != null) {
       words.addAll(

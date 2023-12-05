@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lsb_translator/config/user/user_config.dart';
 import 'package:lsb_translator/domain/entities/user.dart';
 import 'package:lsb_translator/mappers/user_mapper.dart';
+import 'package:lsb_translator/shared/data/api_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider extends ChangeNotifier {
@@ -11,7 +12,7 @@ class UserProvider extends ChangeNotifier {
 
   final dio = Dio(
     BaseOptions(
-      baseUrl: 'https://lsb.zeroproject.dev/api',
+      baseUrl: ApiConfig.url,
     ),
   );
 
@@ -47,7 +48,7 @@ class UserProvider extends ChangeNotifier {
 
     try {
       final response = await dio
-          .post('/v1/auth/login', data: {'email': email, 'password': password});
+          .post('/auth/login', data: {'email': email, 'password': password});
 
       user = UserMapper.userJsonToEntity(response.data['user']);
       _saveCredentials(email, password);
