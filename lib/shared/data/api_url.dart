@@ -1,3 +1,3 @@
 class ApiConfig {
-  static String url = 'https://traductorlsb.com/api/v1';
+  static String url = 'http://18.231.27.17:3300/api/v1';
 }

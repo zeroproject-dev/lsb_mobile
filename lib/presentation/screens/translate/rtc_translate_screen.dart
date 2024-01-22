@@ -156,7 +156,7 @@ class _TranslateScreenState extends State<TranslateScreen> {
     );
   }
 
-  Future<String> getUrlService() async {
+  Future<void> getUrlService() async {
     final dio = Dio(
       BaseOptions(
         baseUrl: ApiConfig.url,
@@ -165,10 +165,12 @@ class _TranslateScreenState extends State<TranslateScreen> {
 
     final response = await dio.get('/translate/service-link');
 
-    if (response.data['data']['data'] != null) {
-      return response.data['data']['host'];
+    print("GETURLSERVICE");
+    print(response.data['data']);
+    if (response.data['data'] != null) {
+      print(response.data['data']);
+      _translateService = response.data['data']['host'];
     }
-    return "";
   }
 
   Future<void> initLocalRenderers() async {
@@ -176,9 +178,8 @@ class _TranslateScreenState extends State<TranslateScreen> {
   }
 
   @override
-  void initState() async {
+  void initState() {
     super.initState();
-    _translateService = await getUrlService();
     initLocalRenderers();
 
     // _dataChannel?.onMessage = _onDataChannelMessage;
@@ -250,6 +251,8 @@ class _TranslateScreenState extends State<TranslateScreen> {
   }
 
   Future<void> _negotiateRemoteConnection() async {
+    await getUrlService();
+    print("TRANSLATION SERVICE: $_translateService");
     return _peerConnection!
         .createOffer()
         .then((offer) {
